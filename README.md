@@ -1,3 +1,8 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+
 # Justice Analytics + Bias Detection Engine
 
 **Make the invisible visible**
@@ -80,8 +85,32 @@ npm install @justice-os/analytics
 ```
 
 ```ts
-import { OutcomeAnalyzer, BiasDetector } from '@justice-os/analytics';
+import { BiasDetector } from '@justice-os/analytics';
+
+// Initialize with significance thresholds
+const detector = new BiasDetector({
+  significanceLevel: 0.05,
+  minimumSampleSize: 30,
+});
+
+// Detect bias in sentencing outcomes by race
+const result = await detector.detectBias(
+  'CA',                        // jurisdiction
+  'sentence_length',           // outcome metric
+  'race',                      // protected attribute
+  ['case_type', 'prior_record'], // control variables
+);
+
+console.log(result.finding);        // "significant_disparity" | "no_significant_disparity"
+console.log(result.disparityRatio); // ratio of outcome between groups
+console.log(result.effectSize);     // Cohen's d
+
+// Run a full audit across all metrics and attributes
+const audit = await detector.runFullAudit('CA');
+const flagged = detector.filterSignificant(audit);
 ```
+
+See [`examples/bias-analysis.ts`](./examples/bias-analysis.ts) for a full working example.
 
 ## Development
 
@@ -94,6 +123,40 @@ npm run test      # Run tests
 npm run build     # Build for production
 ```
 
+## Roadmap
+
+| Feature | Status |
+|---------|--------|
+| BiasDetector with regression analysis stubs | Done |
+| OutcomeAnalyzer with demographic breakdowns | Done |
+| ETL pipeline with privacy layer (k-anonymity) | In Progress |
+| Geographic disparity mapping | In Progress |
+| PDF report export for funders | Planned |
+| Real-time alert system for emerging disparities | Planned |
+
 ## License
 
 MIT -- see [LICENSE](./LICENSE) for details.
+
+---
+
+## Justice OS Ecosystem
+
+This repository is part of the **Justice OS** open-source ecosystem — 12 interconnected projects building the infrastructure for accessible justice technology.
+
+| Repository | Description |
+|-----------|-------------|
+| [justice-os](https://github.com/dougdevitre/justice-os) | Core modular platform — the foundation |
+| [mobile-court-access](https://github.com/dougdevitre/mobile-court-access) | Mobile-first court access kit |
+| [vetted-legal-ai](https://github.com/dougdevitre/vetted-legal-ai) | RAG engine with citation validation |
+| [court-doc-engine](https://github.com/dougdevitre/court-doc-engine) | TurboTax for legal filings |
+| [cognitive-load-ui](https://github.com/dougdevitre/cognitive-load-ui) | Design system for stressed users |
+| [multilingual-justice](https://github.com/dougdevitre/multilingual-justice) | Real-time legal translation |
+| [justice-api-gateway](https://github.com/dougdevitre/justice-api-gateway) | Interoperability layer for courts |
+| [justice-analytics](https://github.com/dougdevitre/justice-analytics) | Bias detection and disparity dashboards |
+| [evidence-timeline](https://github.com/dougdevitre/evidence-timeline) | Evidence timeline builder |
+| [digital-literacy-sim](https://github.com/dougdevitre/digital-literacy-sim) | Digital literacy simulator |
+| [pro-se-toolkit](https://github.com/dougdevitre/pro-se-toolkit) | Self-represented litigant tools |
+| [justice-components](https://github.com/dougdevitre/justice-components) | Reusable component library |
+
+> Built with purpose. Open by design. Justice for all.
